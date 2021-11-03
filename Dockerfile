@@ -1,4 +1,4 @@
-FROM golang:1.16-buster AS build
+FROM golang AS build
 
 WORKDIR /app
 
