@@ -4,6 +4,8 @@ services:
     build: .
     ports:
       - "80:8081"
+    depends_on:
+      - db
   db:
     build: ./db/
     ports:
