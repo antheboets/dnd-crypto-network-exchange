@@ -1,8 +1,10 @@
 version: '3.9'
 services:
-  DndServer:
+  server:
     build: .
-  DndDatabase:
+    ports:
+      - "80:8081"
+  db:
     build: ./db/
     ports:
       - "1433:1433"
