@@ -6,6 +6,8 @@ WORKDIR /app
 #COPY go.sum ./
 #RUN go mod download
 
+
+COPY resources ./resources/
 COPY *.go ./
 
 #RUN go build testserver.go
