@@ -9,9 +9,7 @@ import (
 func main() {
 
 	fmt.Println("starting server")
-
+	
 	http.Handle("/", http.FileServer(http.Dir("./resources/test")))
-
-    log.Fatal(http.ListenAndServe(":8081", nil))
-
+	log.Fatal(http.ListenAndServe(":8081", nil))
 }
