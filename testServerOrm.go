@@ -8,7 +8,7 @@ import (
 	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
 )
-
+/*
 type Transaction struct {
 	ID             string `gorm:"primaryKey;autoIncrement:true"`
 	CreatedAt      time.Time
@@ -21,10 +21,8 @@ type Transaction struct {
 }
 
 type Token struct {
-	ID        string `gorm:"primaryKey;autoIncrement:true"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	ID    string      `gorm:"primary_key" sql:"type:UUID"`
+	//ID        string `gorm:"primaryKey;autoIncrement:true"`
 	Name      string
 	ShortName string
 	Image     string
@@ -32,41 +30,90 @@ type Token struct {
 }
 
 type Wallet struct {
-	ID        string `gorm:"primaryKey;autoIncrement:true"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt
-	Value     int
-	//UserS      *User  `gorm:"foreignKey:UserId"`
-	//TokenS     *Token `gorm:"foreignKey:TokenId"`
-	UserObj    User  `gorm:"foreignKey:LocationsID;references:ID"`
-	TokenObj   Token `gorm:"foreignKey:LocationID;references:ID"`
+	ID    	string      `gorm:"primary_key" sql:"type:UUID"`
+	Value 	int
+	UserId 	string
+	User  User `gorm:"foreignKey:UserId;references:ID"`
+	TokenId string
+	Token  Token `gorm:"foreignKey:TokenId;references:ID"`
 	WalletLink string
 }
 
+
+/*
+	//UserS      *User  `gorm:"foreignKey:UserId"`
+	//TokenS     *Token `gorm:"foreignKey:TokenId"`
+	//UserObj    User  `gorm:"foreignKey:LocationsID;references:ID"`
+
+*/
+/*
 type User struct {
 	gorm.Model
 	Name string
 	//Wallets   []*Wallet
 }
+*/
+
+type Transaction struct {
+	ID             string `db:"id,key,auto"`
+	Token          Token
+	Amount         float64
+	SenderWallet   Wallet
+	RecieverWaller Wallet
+}
+
+type Token struct {
+	ID 		string `db:"id,key,auto"`
+	Name      string
+	ShortName string
+	Image     string
+	Value     float64
+}
+
+type Wallet struct {
+	ID    	string
+	Value 	int
+	User  User `gorm:"foreignKey:UserRefer"`
+	//TokenId string
+	//Token  Token `gorm:"foreignKey:TokenId"`
+	WalletLink string
+}
+
+type User struct {
+	ID string `db:"id,key,auto"`
+	Name string
+	//Wallets   []*Wallet
+}
 
 /*
-type Product struct {
+type User struct {
 	gorm.Model
-	Code  string
-	Price uint
-}
+	Name         string
+	CompanyRefer int
+	Company      Company `gorm:"foreignKey:CompanyRefer"`
+	// use CompanyRefer as foreign key
+  }
+  
+  type Company struct {
+	ID   int
+	Name string
+  }
 */
+
 
 func main() {
 	rand.Seed(time.Now().UnixNano())
 	db, err := connectToServer("dndUser", "cB345678", "1433", "dndDb")
 	fmt.Println(err)
 	fmt.Println(db)
-	//db.AutoMigrate(&Token{})
+	
+	db.AutoMigrate(&Token{})
 	//db.AutoMigrate(&User{})
-	db.AutoMigrate(&Wallet{})
-	db.Create(&User{Name: "anthe"})
+	//db.AutoMigrate(&Wallet{})
+	
+	//db.AutoMigrate(&Company{})
+	//db.AutoMigrate(&User{})
+	//db.Create(&User{Name: "anthe"})
 	//db.AutoMigrate(&Transaction{})
 
 	/*
@@ -93,6 +140,8 @@ func main() {
 	*/
 
 }
+
+
 
 func getRandomString(length int) string {
 	charString := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
