@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "mosYJRLgPIbKwHxOQ/uCyoHjDeS2I7V87Gv+k1VayIKMdBf390Qd6PJ2PQLTwFbLJHdr638GtOZ+UmGog9uyRg==",
+  "success": true,
+  "projectFilePath": "/home/anthe/Desktop/dnd-crypto-network-exchange/server/server.csproj",
+  "expectedPackageFiles": [
+    "/home/anthe/.nuget/packages/microsoft.extensions.apidescription.server/3.0.0/microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
+    "/home/anthe/.nuget/packages/microsoft.openapi/1.2.3/microsoft.openapi.1.2.3.nupkg.sha512",
+    "/home/anthe/.nuget/packages/swashbuckle.aspnetcore/5.6.3/swashbuckle.aspnetcore.5.6.3.nupkg.sha512",
+    "/home/anthe/.nuget/packages/swashbuckle.aspnetcore.swagger/5.6.3/swashbuckle.aspnetcore.swagger.5.6.3.nupkg.sha512",
+    "/home/anthe/.nuget/packages/swashbuckle.aspnetcore.swaggergen/5.6.3/swashbuckle.aspnetcore.swaggergen.5.6.3.nupkg.sha512",
+    "/home/anthe/.nuget/packages/swashbuckle.aspnetcore.swaggerui/5.6.3/swashbuckle.aspnetcore.swaggerui.5.6.3.nupkg.sha512"
+  ],
+  "logs": []
+}
