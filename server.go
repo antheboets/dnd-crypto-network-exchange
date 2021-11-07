@@ -34,34 +34,49 @@ type TokenDto struct{
 
 var db *gorm.DB
 
+func getDB() *gorm.DB{
+	
+	if db == nil {
+		for i := 0; i < 5; i++ {
+			db, err := connectToServer("dndUser", "cB345678", "1433", "dndDb")
+			if err != nil {
+				fmt.Println("Connetion faild(" + string(i) + ")",err)
+			}
+			if db != nil {
+				db.AutoMigrate(&Token{})
+				db.AutoMigrate(&TokenHis{})
+				return db
+			}
+			time.Sleep(time.Second * 2)
+		}
+	}
+	return db
+}
+
 func main() {
+	fmt.Println(db)
 	time.Sleep(time.Second * 4)
 	var wg sync.WaitGroup
 	rand.Seed(time.Now().UnixNano())
-	dbObj, err := connectToServer("dndUser", "cB345678", "1433", "dndDb")
-	if err != nil {
-		fmt.Println(err)
-	}
-	db = dbObj
-	db.AutoMigrate(&Token{})
-	db.AutoMigrate(&TokenHis{})
+	
+	
 	wg.Add(2)
 	
-	go func(db *gorm.DB) {
-		startServer(db)
+	go func() {
+		startServer()
 		wg.Done()
-	}(db)
-	//test(db)
-	go func(db *gorm.DB) {
-		addTokens(db)
-		updatePrice(db,5)
+	}()
+
+	go func() {
+		addTokens()
+		updatePrice(5)
 		wg.Done()
-	}(db)
+	}()
 
 	wg.Wait()
 }
 
-func startServer(db *gorm.DB) {
+func startServer() {
 	fmt.Println("starting server")
 	http.Handle("/", http.FileServer(http.Dir("./resources")))
 	http.HandleFunc("/tokens/",getAllTokens)
@@ -71,10 +86,10 @@ func startServer(db *gorm.DB) {
 func getAllTokens(w http.ResponseWriter, r *http.Request) {
 	TokenDtoList := []TokenDto{} 
 	allTokens := []Token{}
-	db.Find(&allTokens)
+	getDB().Find(&allTokens)
 	for i := 0; i < len(allTokens); i++ {
 		tokensHis := []TokenHis{}
-		db.Where("short_name LIKE ?", allTokens[i].ShortName).Order("time").Find(&tokensHis)
+		getDB().Where("short_name LIKE ?", allTokens[i].ShortName).Order("time").Find(&tokensHis)
 		//TokenHisDtoList := []TokenHis{} 
 		/*
 		for j := 0; j < len(tokensHis); j++{
@@ -123,40 +138,40 @@ func connectToServer(dbUser string, dbPass string, port string, dbName string) (
 	return db, err
 }
 
-func addTokens(db *gorm.DB){
+func addTokens(){
 	allTokens := []Token{}
-	db.Find(&allTokens)
+	getDB().Find(&allTokens)
 	if len(allTokens) == 0 {
 		fmt.Println("adding tokens")
-		db.Create(&Token{ID:getRandomString(16), Name:"Magecoin", ShortName:"MGC", Value:8, Image:"imagetext"})
-		db.Create(&Token{ID:getRandomString(16), Name:"Magecoin Goldpiece", ShortName:"MCG", Value:0.08, Image:"imagetext"})
-		db.Create(&Token{ID:getRandomString(16), Name:"Mana", ShortName:"MAN", Value:4, Image:"imagetext"}) 
-		db.Create(&Token{ID:getRandomString(16), Name:"Goblincoin", ShortName:"GOB", Value:0.02, Image:"imagetext"})
-		db.Create(&Token{ID:getRandomString(16), Name:"DnDeChain", ShortName:"DET", Value:0.5, Image:"imagetext"})
+		getDB().Create(&Token{ID:getRandomString(16), Name:"Magecoin", ShortName:"MGC", Value:8, Image:"imagetext"})
+		getDB().Create(&Token{ID:getRandomString(16), Name:"Magecoin Goldpiece", ShortName:"MCG", Value:0.08, Image:"imagetext"})
+		getDB().Create(&Token{ID:getRandomString(16), Name:"Mana", ShortName:"MAN", Value:4, Image:"imagetext"}) 
+		getDB().Create(&Token{ID:getRandomString(16), Name:"Goblincoin", ShortName:"GOB", Value:0.02, Image:"imagetext"})
+		getDB().Create(&Token{ID:getRandomString(16), Name:"DnDeChain", ShortName:"DET", Value:0.5, Image:"imagetext"})
 
-		db.Create(&TokenHis{ID:getRandomString(16), ShortName:"MGC", Value:8, Time: time.Now()}) 
-		db.Create(&TokenHis{ID:getRandomString(16), ShortName:"MCG", Value:0.08, Time: time.Now()}) 
-		db.Create(&TokenHis{ID:getRandomString(16), ShortName:"MAN", Value:4, Time: time.Now()}) 
-		db.Create(&TokenHis{ID:getRandomString(16), ShortName:"GOB", Value:0.02, Time: time.Now()})
-		db.Create(&TokenHis{ID:getRandomString(16), ShortName:"DET", Value:0.5, Time: time.Now()})
+		getDB().Create(&TokenHis{ID:getRandomString(16), ShortName:"MGC", Value:8, Time: time.Now()}) 
+		getDB().Create(&TokenHis{ID:getRandomString(16), ShortName:"MCG", Value:0.08, Time: time.Now()}) 
+		getDB().Create(&TokenHis{ID:getRandomString(16), ShortName:"MAN", Value:4, Time: time.Now()}) 
+		getDB().Create(&TokenHis{ID:getRandomString(16), ShortName:"GOB", Value:0.02, Time: time.Now()})
+		getDB().Create(&TokenHis{ID:getRandomString(16), ShortName:"DET", Value:0.5, Time: time.Now()})
 	} else {
 		fmt.Println("tokens already present")
 	}
 }
 
-func updatePrice(db *gorm.DB, min int){
+func updatePrice(min int){
 	
 	for i := 1; true; i++{
 		fmt.Println("updating tokens")
 		allTokens := []Token{}
-		db.Find(&allTokens)
+		getDB().Find(&allTokens)
 		for j := 0; j < len(allTokens); j++{
 			newValue := calcChangeInCoinPrice(allTokens[j])
 			newToken := allTokens[j]
 			newToken.Value = newValue
 			newTokenHis := TokenHis{ID:getRandomString(16), ShortName:newToken.ShortName, Value:newValue, Time: time.Now()}
-			db.Model(allTokens[j]).Update("Value",newValue)
-			db.Create(&newTokenHis)
+			getDB().Model(allTokens[j]).Update("Value",newValue)
+			getDB().Create(&newTokenHis)
 		}
 		time.Sleep(time.Minute * 5)
 	}	
