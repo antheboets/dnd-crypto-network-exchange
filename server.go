@@ -35,7 +35,7 @@ type TokenDto struct{
 var db *gorm.DB
 
 func main() {
-	//time.Sleep(time.Second * 10)
+	time.Sleep(time.Second * 4)
 	var wg sync.WaitGroup
 	rand.Seed(time.Now().UnixNano())
 	dbObj, err := connectToServer("dndUser", "cB345678", "1433", "dndDb")
@@ -158,7 +158,7 @@ func updatePrice(db *gorm.DB, min int){
 			db.Model(allTokens[j]).Update("Value",newValue)
 			db.Create(&newTokenHis)
 		}
-		time.Sleep(time.Minute * 1)
+		time.Sleep(time.Minute * 5)
 	}	
 }
 
