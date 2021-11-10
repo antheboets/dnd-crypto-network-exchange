@@ -9,7 +9,7 @@
             <canvas id="myChart"></canvas>
         </div>
         <script>
-            fetch("http://localhost/tokens/").then(response => response.json()).then((dataFromReq) => {
+            fetch("http://server/tokens/").then(response => response.json()).then((dataFromReq) => {
                 const ctx = document.getElementById('myChart');
                     const myChart = new Chart(ctx, {
                     type: 'line',
