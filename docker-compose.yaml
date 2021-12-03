@@ -6,7 +6,14 @@ services:
       - "80:8081"
     depends_on:
       - db
+    networks:
+      - some-net
   db:
     build: ./db/
     ports:
       - "1433:1433"
+    networks:
+      - some-net
+networks:
+  some-net:
+    driver: bridge
