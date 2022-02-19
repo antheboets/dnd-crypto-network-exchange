@@ -12,3 +12,4 @@ require (
 	gorm.io/driver/sqlserver v1.2.0 // indirect
 	gorm.io/gorm v1.22.2 // indirect
 )
+replace dao => /dao/
