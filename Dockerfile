@@ -1,4 +1,6 @@
-FROM golang:1.19.3 AS build
+FROM golang:1.19.3-alpine AS build
+
+RUN apk -U upgrade
 
 WORKDIR /app
 
