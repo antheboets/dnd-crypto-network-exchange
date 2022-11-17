@@ -10,6 +10,7 @@ import (
 	"sync"
 	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
+	"dao"
 )
 
 type Token struct {
@@ -32,12 +33,14 @@ type TokenDto struct{
 	TokenHistory []TokenHis `json:"tokenHistory"`
 }
 
-var db *gorm.DB
 
+//var db *gorm.DB = nil
+/*
 func getDB() *gorm.DB{
 	
 	if db == nil {
 		for i := 0; i < 5; i++ {
+			//fmt.Println(db)
 			db, err := connectToServer("dndUser", "cB345678", "1433", "dndDb")
 			if err != nil {
 				fmt.Println("Connetion faild(" + string(i) + ")",err)
@@ -50,12 +53,17 @@ func getDB() *gorm.DB{
 			time.Sleep(time.Second * 2)
 		}
 	}
+	fmt.Println("test")
 	return db
 }
+*/
+
+
 
 func main() {
+	/*
 	fmt.Println(db)
-	time.Sleep(time.Second * 4)
+	time.Sleep(time.Second * 8)
 	var wg sync.WaitGroup
 	rand.Seed(time.Now().UnixNano())
 	
@@ -74,6 +82,7 @@ func main() {
 	}()
 
 	wg.Wait()
+	*/
 }
 
 func startServer() {
@@ -123,20 +132,7 @@ func getRandomNumber() float64{
 	return float64(rand.Intn(10)) / 100
 }
 
-func connectToServer(dbUser string, dbPass string, port string, dbName string) (*gorm.DB, error) {
-	// github.com/denisenkom/go-mssqldb
-	fmt.Println("connection to database")
-	dsn := "sqlserver://" + dbUser + ":" + dbPass + "@db:" + port + "?database=" + dbName
-	fmt.Println(dsn)
-	db, err := gorm.Open(sqlserver.Open(dsn), &gorm.Config{})
-	if err != nil {
-		fmt.Println("faild to connect to server")
-		fmt.Println(err)
-		return db, err
-	}
-	fmt.Println("database connected")
-	return db, err
-}
+
 
 func addTokens(){
 	allTokens := []Token{}
